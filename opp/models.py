@@ -11,3 +11,10 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.name
+
+class Opportunites(models.Model):
+    name = models.CharField(null=False, max_length=64)
+    url = models.CharField(unique=True, null=False, max_length=256)
+    description = models.CharField(null=False, max_length=2500)
+    date = models.DateField(null=False)
+    category = models.CharField(null=False, max_length=32)
