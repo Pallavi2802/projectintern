@@ -12,7 +12,11 @@ from .models import UserProfile, Opportunites
 from . import views
 
 def index(request):
-    return render(request,"index.html")
+    alldata = Opportunites.objects.all()
+    context = {'alldata': alldata}
+    return render(request,"index.html",context)
+
+    
 
 class Login(APIView):
     def get(self, request):
@@ -95,18 +99,20 @@ class OrganisationSignUp(APIView):
 
 
 
-class userindex(APIView):
-    def get(self, request):
-        return render(request, 'userindex.html')
+def userindex(request):
+    alldat = Opportunites.objects.all()
+    content = {'alldat': alldat}
+    return render(request, 'userindex.html',content)
 
 class logout(APIView):
     def get(self, request):
         auth.logout(request)
         return redirect('index')
 
-class orgindex(APIView):
-    def get(self, request):
-        return render(request, 'orgindex.html')
+def orgindex(request):
+     data = Opportunites.objects.all()
+     info = {'data': data}
+     return render(request, 'orgindex.html',info)
     
 class addOpportunity(APIView):
     def get(self, request):
@@ -118,7 +124,7 @@ class addOpportunity(APIView):
             "STEM",
             "Sports",
             "Arts",
-            "Politics,Speech and Social Studies"
+            "Politics,Speech and Social Studies","Music","Visual Arts"
         ]
         return render(request, 'addOpportunity.html', {"opportunities": opps,"error": "Please enter all the fields"})
 
@@ -127,6 +133,6 @@ class addOpportunity(APIView):
             opp = Opportunites(name=request.POST['name'], url=request.POST['oppurl'],
                                description=request.POST['description'], date=request.POST['date'], category=request.POST['category'])
             opp.save()
-            return redirect('login')
-        else:
             return redirect('orgindex')
+        else:
+            return redirect('addopportunity')

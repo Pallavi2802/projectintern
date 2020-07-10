@@ -8,9 +8,9 @@ urlpatterns=[
     path("",views.index,name="index"),
     path('login/', views.Login.as_view(), name='login'),
     path('register/', views.SignUp.as_view(), name='signup'),
-    path('orgsignup/', views.OrganisationSignUp.as_view(), name='orgsignup'),
-    path('userindex/', views.userindex.as_view(), name='userindex'),
+    path('orgsignup/', views.OrganisationSignUp, name='orgsignup'),
+    path('userindex/', views.userindex, name='userindex'),
     path('logout/', views.logout.as_view(), name='logout'),
-    path('orgindex/', views.userindex.as_view(), name='orgindex'),
+    path('orgindex/', views.orgindex, name='orgindex'),
     path('addopportunity/', views.addOpportunity.as_view(), name='addOpportunity'),
 ]
