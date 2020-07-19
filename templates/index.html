@@ -281,7 +281,20 @@
                                     <div class="location">
                                         <p><i class="fa fa-list-alt"></i>{{ var.category}}</p>
                                     </div>
-                                </div>
+                                    <a href="#" onClick="document.getElementById('likebutton').submit()"><i class="fa fa-arrow-up"></i></a> {{var.likes}} |   <a href="#" onClick="document.getElementById('dislikebutton').submit()"><i class="fa fa-arrow-down"></i></a> {{var.dislikes}}  
+
+
+                                    <form id="likebutton" method="POST" action="/posts/{{var.id}}/preference/1/">
+                                    {% csrf_token %}
+                                    <input type="hidden">
+                                    </form >  
+                                    <form id="dislikebutton" method="POST" action="/posts/{{var.id}}/preference/2/">
+                                        {% csrf_token %}
+                                        <input type="hidden">
+                                        </form>
+                                        
+                                                                
+                                    </div>
                             </div>
                         </div>
                         <div class="jobs_right">
@@ -302,8 +315,7 @@
                 </div>
     
 <!-- job_listing_area_end  -->
-<br>
-<br>
+
 <!-- featured_candidates_area_start  -->
 <div class="featured_candidates_area">
     <div class="container">

@@ -1,22 +1,19 @@
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.views import View
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.conf import settings
+
 import random
+
 from django.core.validators import validate_email
 from django.contrib import auth
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
-from .models import UserProfile, Opportunites
+from .models import UserProfile, Opportunites,Vote as Preference
 from . import views
 
-def index(request):
-    alldata = Opportunites.objects.all()
-    context = {'alldata': alldata}
-    return render(request,"index.html",context)
-
-    
 
 class Login(APIView):
     def get(self, request):
@@ -31,9 +28,13 @@ class Login(APIView):
                 users = UserProfile.objects.get(user=user)
 
                 if users.is_Organisation:
-                     return render(request,'orgindex.html')
+                  data = Opportunites.objects.all()
+                  info = {'data': data}
+                  return render(request,'orgindex.html',info)
                 else:
-                    return render(request,'userindex.html')
+                  alldata = Opportunites.objects.all()
+                  cont = {'alldata': alldata}
+                  return render(request,'userindex.html',cont)
 
             except:
                 return render(request, 'login.html')
@@ -96,13 +97,16 @@ class OrganisationSignUp(APIView):
                 userprofile.save()
                 return redirect('login')
 
-
+def index(request):
+    alldata = Opportunites.objects.all()
+    context = {'alldata': alldata}
+    return render(request,"index.html",context)
 
 
 def userindex(request):
-    alldat = Opportunites.objects.all()
-    content = {'alldat': alldat}
-    return render(request, 'userindex.html',content)
+    alldata = Opportunites.objects.all()
+    cont = {'alldata': alldata}
+    return render(request, 'userindex.html',cont)
 
 class logout(APIView):
     def get(self, request):
@@ -136,3 +140,98 @@ class addOpportunity(APIView):
             return redirect('orgindex')
         else:
             return redirect('addopportunity')
+
+
+@login_required(login_url='/login')
+def postpreference(request, postid, userpreference):
+        
+        if request.method == "POST":
+                eachpost= get_object_or_404(Opportunites, id=postid)
+                obj=''
+                valueobj=''
+
+                try:
+                        obj= Preference.objects.get(user= request.user, post= eachpost)
+                        valueobj= obj.value #value of userpreference
+                        valueobj= int(valueobj)
+                        userpreference= int(userpreference)
+                
+                        if valueobj != userpreference:
+                                obj.delete()
+
+
+                                upref= Preference()
+                                upref.user= request.user
+
+                                upref.post= eachpost
+
+                                upref.value= userpreference
+
+
+                                if userpreference == 1 and valueobj != 1:
+                                        eachpost.likes += 1
+                                        eachpost.dislikes -=1
+                                elif userpreference == 2 and valueobj != 2:
+                                        eachpost.dislikes += 1
+                                        eachpost.likes -= 1
+                                
+
+                                upref.save()
+
+                                eachpost.save()
+                                alldata = Opportunites.objects.all()
+                                cont = {'alldata': alldata}
+
+                                return render (request, 'userindex.html', cont)
+
+                        elif valueobj == userpreference:
+                                obj.delete()
+                        
+                                if userpreference == 1:
+                                        eachpost.likes -= 1
+                                elif userpreference == 2:
+                                        eachpost.dislikes -= 1
+
+                                eachpost.save()
+
+                                alldata = Opportunites.objects.all()
+                                cont = {'alldata': alldata}
+
+                                return render (request, 'userindex.html', cont)
+                                
+                        
+        
+                
+                except Preference.DoesNotExist:
+                        upref= Preference()
+
+                        upref.user= request.user
+
+                        upref.post= eachpost
+
+                        upref.value= userpreference
+
+                        userpreference= int(userpreference)
+
+                        if userpreference == 1:
+                                eachpost.likes += 1
+                        elif userpreference == 2:
+                                eachpost.dislikes +=1
+
+                        upref.save()
+
+                        eachpost.save()                            
+
+
+                        alldata = Opportunites.objects.all()
+                        cont = {'alldata': alldata}
+
+                        return render (request, 'userindex.html', cont)
+
+
+        else:
+                eachpost= get_object_or_404(Post, id=postid)
+                alldata = Opportunites.objects.all()
+                cont = {'alldata': alldata}
+
+                return render (request, 'userindex.html', cont)

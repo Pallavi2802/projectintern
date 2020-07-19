@@ -240,7 +240,6 @@
 <!-- popular_catagory_area_end  -->
 
 <!-- job_listing_area_start  -->
-<!-- job_listing_area_start  -->
 <div class="job_listing_area">
     <div class="container">
         <div class="row align-items-center">
@@ -255,7 +254,7 @@
                 </div>
             </div>
         </div>
-        {% for item in alldat %}
+        {% for var in alldata %}
         <div class="job_lists">
             <div class="row">
                 <div class="col-lg-12 col-md-12">
@@ -266,14 +265,26 @@
                                 <img src="img/svg_icon/1.svg" alt="">
                             </div>
                             <div class="jobs_conetent">
-                                <a href="job_details.html"><h4>{{ item.name }}</h4></a>
+                                <a href="job_details.html"><h4>{{ var.name }}</h4></a>
                                 <div class="links_locat d-flex align-items-center">
                                     <div class="location">
                                         <p><i class="fa fa-map-marker"></i>India</p>
                                     </div>
                                     <div class="location">
-                                        <p><i class="fa fa-list-alt"></i>{{ item.category}}</p>
+                                        <p><i class="fa fa-list-alt"></i>{{ var.category}}</p>
                                     </div>
+                                    <a href="#" onClick="document.getElementById('likebutton').submit()"><i class="fa fa-arrow-up"></i></a> {{var.likes}} |   <a href="#" onClick="document.getElementById('dislikebutton').submit()"><i class="fa fa-arrow-down"></i></a> {{var.dislikes}}  
+
+
+<form id="likebutton" method="POST" action="/posts/{{var.id}}/preference/1/">
+{% csrf_token %}
+<input type="hidden">
+</form >  
+<form id="dislikebutton" method="POST" action="/posts/{{var.id}}/preference/2/">
+    {% csrf_token %}
+    <input type="hidden">
+    </form>
+    
                                 </div>
                             </div>
                         </div>
@@ -283,7 +294,7 @@
                                 <a href="job_details.html" class="boxed-btn3">Apply Now</a>
                             </div>
                             <div class="date">
-                                <p>Dead line:{{item.date }}</p>
+                                <p>Dead line:{{var.date }}</p>
                             </div>
                         </div>
                     </div>
@@ -297,8 +308,6 @@
 <!-- job_listing_area_end  -->
 <br>
 <br>
-<!-- featured_candidates_area_start  -->
-
 <!-- featured_candidates_area_start  -->
 <div class="featured_candidates_area">
     <div class="container">
